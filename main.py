@@ -12,11 +12,16 @@ def main():
 	}
 
 	twitterConfig = {
-		"consumer_key": "",
-		"consumer_secret": "",
-		"access_token": "",
-		"access_token_secret": ""
+		"consumer_key": "nnqfoFm92SsTzzDmqy2mtAFHI",
+		"consumer_secret": "FKnrbqSSQKrd8ykFMN1jQeVwEQLBRJvTiTVgK1m11pTvNZt0Wu",
+		"access_token": "1391426418886778882-JYMM6LLiY35ProkAf8VeO5aNAwvyY1",
+		"access_token_secret": "MsUbAjlDy8YDcCohoKCNEfkE661wMhnOuKPvj2dzdBfeH"
 	}
+
+	consumer_key = "nnqfoFm92SsTzzDmqy2mtAFHI"
+	consumer_secret = "FKnrbqSSQKrd8ykFMN1jQeVwEQLBRJvTiTVgK1m11pTvNZt0Wu"
+	access_token = "1391426418886778882-JYMM6LLiY35ProkAf8VeO5aNAwvyY1"
+	access_token_secret = "MsUbAjlDy8YDcCohoKCNEfkE661wMhnOuKPvj2dzdBfeH"
 
 
 	firebase = pyrebase.initialize_app(firebaseConfig)
@@ -24,6 +29,12 @@ def main():
 
 	plants = db.get()
 	print(plants.val())
+
+	auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+	auth.set_access_token(access_token, access_token_secret)
+
+	api = tweepy.API(auth)
+	api.update_status(str(plants.val()))
 
 if __name__ == "__main__":
 	main()
