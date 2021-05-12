@@ -23,24 +23,33 @@ def deleteLastTweets(api, number):
 	for tweet in api.home_timeline(number):
 		api.destroy_status(tweet.id)
 
+def stream_handler(message):
+    print(message["event"])
+    print(message["path"])
+    print(message["data"])
+
 def main():
 
 	firebase = pyrebase.initialize_app(firebaseConfig)
 	db = firebase.database()
 
-	plants = db.child("Plants").get()
+	print("Ready to stream")
+	my_stream = db.child("Plants").stream(stream_handler)
 
-	auth = tweepy.OAuthHandler(twitterConfig.get("consumer_key"), twitterConfig.get("consumer_secret"))
-	auth.set_access_token(twitterConfig.get("access_token"), twitterConfig.get("access_token_secret"))
+	#plants = db.child("Plants").get()
 
-	api = tweepy.API(auth)
+
+	#auth = tweepy.OAuthHandler(twitterConfig.get("consumer_key"), twitterConfig.get("consumer_secret"))
+	#auth.set_access_token(twitterConfig.get("access_token"), twitterConfig.get("access_token_secret"))
+
+	#api = tweepy.API(auth)
 	#deleteLastTweets(api, 1)
 
-	tweet = ""
-	for i in range(2):
-		tweet += "Plant_" + str(i+1) + ": " + str(plants.val().get("Plant_" + str(i+1))) + "\n"
+	#tweet = ""
+	#for i in range(2):
+		#tweet += "Plant_" + str(i+1) + ": " + str(plants.val().get("Plant_" + str(i+1))) + "\n"
 
-	api.update_status(tweet)
+	#api.update_status(tweet)
 
 if __name__ == "__main__":
 	main()
