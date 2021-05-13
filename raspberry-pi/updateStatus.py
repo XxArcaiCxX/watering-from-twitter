@@ -17,24 +17,52 @@ twitterConfig = {
 	"access_token_secret": "MsUbAjlDy8YDcCohoKCNEfkE661wMhnOuKPvj2dzdBfeH"
 }
 
+firebase = pyrebase.initialize_app(firebaseConfig)
+db = firebase.database()
+
+firstStream = True
 
 def deleteLastTweets(api, number):
 	print(number)
 	for tweet in api.home_timeline(number):
 		api.destroy_status(tweet.id)
 
-def stream_handler(message):
-    print(message["event"])
-    print(message["path"])
-    print(message["data"])
+def stats_stream_handler(message):
+	#print(message["event"])
+	print(message["path"])
+	#print(message["data"])
+	global firstStream
+
+	if firstStream == True:
+		firstStream = False
+	else:
+		path = message["path"].split('/')
+		plantId = path[1]
+		statId = path[2]
+		value = float(message["data"])
+
+		print(plantId + " says:")
+
+		if statId == "Humidity": # Humidity is the only stat with no upper limit
+			thresholdMin = db.child("Thresholds").child(plantId).child(statId).child("min").get()
+			if value < float(thresholdMin.val()):
+				print("EMERGENCY! Humidity got lower than threshold min at " + str(value))
+			else:
+				print("Just a periodic update, " + statId + " is now at " + str(value))
+		else:
+			thresholdMin = db.child("Thresholds").child(plantId).child(statId).child("min").get()
+			thresholdMax = db.child("Thresholds").child(plantId).child(statId).child("max").get()
+			if value < float(thresholdMin.val()):
+				print("EMERGENCY! " + statId + " got lower than threshold min at " + str(value))
+			elif value > thresholdMax.val():
+				print("EMERGENCY! " + statId + " got higher than threshold max at " + str(value))
+			else:
+				print("Just a periodic update, " + statId + " is now at " + str(value))
 
 def main():
 
-	firebase = pyrebase.initialize_app(firebaseConfig)
-	db = firebase.database()
-
 	print("Ready to stream")
-	my_stream = db.child("Plants").stream(stream_handler)
+	statsStream = db.child("Stats").stream(stats_stream_handler)
 
 	#plants = db.child("Plants").get()
 
