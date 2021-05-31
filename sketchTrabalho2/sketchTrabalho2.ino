@@ -57,27 +57,20 @@ void loop() {
     periodicUpdate();
   }
 
+
   // Check thresholds on firebase to updated with the most recent values
   update(NULL, NULL, "", R_MOIST);
-//  Serial.print("\n\nMoist: ");
-//  Serial.println(limitMoist);
   update(NULL, NULL, "", R_LIGHT);
-//  Serial.print("\n\nLight: ");
-//  Serial.println(limitLight);
   update(NULL, NULL, "", R_TEMP);
-//  Serial.print("\n\nTemp min: ");
-//  Serial.println(limitTemp[0]);
-//  Serial.print("Temp max: ");
-//  Serial.println(limitTemp[1]);
   update(NULL, NULL, "", R_ACT_LED);
   if(response != lastModLed && response != "") {
-    Serial.println("\n\nLED TURNED ON!!!");
+       Serial.println("LED TURNED ON!!!");
     lastModLed = response;
     activateLED();
   }
   update(NULL, NULL, "", R_ACT_WATER);
   if(response != lastModWater && response != "") {
-    Serial.println("\n\nWATER TURNED ON!!!");
+       Serial.println("\n\nWATER TURNED ON!!!");
     lastModWater = response;
     activateWater();
   }
@@ -88,7 +81,7 @@ void loop() {
   if(sensorValue < limitMoist) {   // plant is thirsty
     digitalWrite(LED, HIGH);
     update(sensorValue, NULL, "", MOIST);
-    Serial.println(F("**PLANT 1** is thirsty\nTurning on actuator..."));
+    Serial.println(F("**PLANT 2** is thirsty\nTurning on actuator..."));
     activateWater();
   }
   else digitalWrite(LED, LOW);
@@ -97,7 +90,7 @@ void loop() {
   int value = analogRead(A0);
   if(value < limitLight) {
     update(value, NULL, "", LIGHT);
-    Serial.println(F("**PLANT 1** has little light\nTurning on actuator..."));
+    Serial.println(F("**PLANT 2** has little light\nTurning on actuator..."));
     activateLED();
   }
   //delay(1000);
@@ -235,19 +228,19 @@ byte getPage(char *ipBuf, int thisPort, char *page) {
 void update(int v1, double v2, char* v3, TYPE t) {
   switch(t) {
     case LIGHT: {
-      sprintf(pageAdd, "/firebaseLightP1.php?arduino_data=%d", v1);
+      sprintf(pageAdd, "/firebaseLightP2.php?arduino_data=%d", v1);
       sendItToServer();
       break;
     }case TEMP: {
-      sprintf(pageAdd, "/firebaseTempP1.php?arduino_data=%s", ftoa(tempString, v2, 2));
+      sprintf(pageAdd, "/firebaseTempP2.php?arduino_data=%s", ftoa(tempString, v2, 2));
       sendItToServer();
       break;
     }case MOIST: {
-      sprintf(pageAdd, "/firebaseMoistP1.php?arduino_data=%d", v1);
+      sprintf(pageAdd, "/firebaseMoistP2.php?arduino_data=%d", v1);
       sendItToServer();
       break;
     }case R_LIGHT: {
-      sprintf(pageAdd, "/thresholdsLightP1.txt");
+      sprintf(pageAdd, "/thresholdsLightP2.txt");
       sendItToServer();
       DeserializationError error = deserializeJson(doc, response);
       if(error) {
@@ -257,7 +250,7 @@ void update(int v1, double v2, char* v3, TYPE t) {
       else limitLight = doc["minValue"];
       break;
     }case R_TEMP: {
-      sprintf(pageAdd, "/thresholdsTempP1.txt");
+      sprintf(pageAdd, "/thresholdsTempP2.txt");
       sendItToServer();
       DeserializationError error = deserializeJson(doc, response);
       if(error) {
@@ -270,7 +263,7 @@ void update(int v1, double v2, char* v3, TYPE t) {
       }
       break;
     }case R_MOIST: {
-      sprintf(pageAdd, "/thresholdsMoistP1.txt");
+      sprintf(pageAdd, "/thresholdsMoistP2.txt");
       sendItToServer();
       DeserializationError error = deserializeJson(doc, response);
       if(error) { 
@@ -280,19 +273,19 @@ void update(int v1, double v2, char* v3, TYPE t) {
       else limitMoist = doc["minValue"];   
       break;
     }case ACT_LED: {
-      sprintf(pageAdd, "/firebaseActLedP1.php?arduino_data=%s", v3);
+      sprintf(pageAdd, "/firebaseActLedP2.php?arduino_data=%s", v3);
       sendItToServer();
       break;
     }case ACT_WATER: {
-      sprintf(pageAdd, "/firebaseActWateringP1.php?arduino_data=%s", v3);
+      sprintf(pageAdd, "/firebaseActWateringP2.php?arduino_data=%s", v3);
       sendItToServer();
       break;
     }case R_ACT_LED: {
-      sprintf(pageAdd, "/actuatorLedP1.txt");
+      sprintf(pageAdd, "/actuatorLedP2.txt");
       sendItToServer();
       break;
     }case R_ACT_WATER: {
-      sprintf(pageAdd, "/actuatorWaterP1.txt");
+      sprintf(pageAdd, "/actuatorWaterP2.txt");
       sendItToServer();
       break;
     }
@@ -300,7 +293,7 @@ void update(int v1, double v2, char* v3, TYPE t) {
 }
 
 void updateAll(int v1, int v2, double v3) {
-  sprintf(pageAdd, "/firebaseAllP1.php?arg1=%d&arg2=%d&arg3=%s", v1, v2, ftoa(tempString, v3, 2));
+  sprintf(pageAdd, "/firebaseAllP2.php?arg1=%d&arg2=%d&arg3=%s", v1, v2, ftoa(tempString, v3, 2));
   sendItToServer();
 }
 
