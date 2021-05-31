@@ -5,8 +5,8 @@
   Wireless credentials
  *
 */
-const char ssid[] = "*****";  // network SSID (name)
-const char pass[] = "*****";            // network password
+const char ssid[] = "*****";                // network SSID (name)
+const char pass[] = "*****";                // network password
 int status = WL_IDLE_STATUS;                // the Wifi radio's status
 
 WiFiClient client;
