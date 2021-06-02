@@ -7,7 +7,7 @@ firebaseConfig = {
 	"authDomain": "watering-from-twitter.firebaseapp.com",
 	"databaseURL": "https://watering-from-twitter-default-rtdb.europe-west1.firebasedatabase.app",
 	"storageBucket": "watering-from-twitter.appspot.com",
-	"serviceAccount": "./watering-from-twitter-firebase-adminsdk-ox1ft-2158d5aed1.json"
+	"serviceAccount": "/home/pi/Project/raspberry-pi/watering-from-twitter-firebase-adminsdk-ox1ft-2158d5aed1.json"
 }
 
 twitterConfig = {
