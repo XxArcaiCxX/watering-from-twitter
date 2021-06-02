@@ -1,3 +1,4 @@
+import sys
 import pyrebase
 import tweepy
 
@@ -6,7 +7,7 @@ firebaseConfig = {
 	"authDomain": "watering-from-twitter.firebaseapp.com",
 	"databaseURL": "https://watering-from-twitter-default-rtdb.europe-west1.firebasedatabase.app",
 	"storageBucket": "watering-from-twitter.appspot.com",
-	"serviceAccount": "./watering-from-twitter-firebase-adminsdk-ox1ft-2158d5aed1.json"
+	"serviceAccount": "/home/pi/Project/raspberry-pi/watering-from-twitter-firebase-adminsdk-ox1ft-2158d5aed1.json"
 }
 
 twitterConfig = {
@@ -25,15 +26,23 @@ api = tweepy.API(auth)
 
 firstStream = True
 
-def deleteLastTweets(api, number):
-	print(number)
-	for tweet in api.home_timeline(number):
-		api.destroy_status(tweet.id)
+def periodic_update():
+	global db
+	global api
+	tweet = 'Hey guys, an update on the plants:'
+
+	for i in range(1,3):
+		plantId = "Plant_"+ str(i)
+		humidity = db.child("Stats").child(plantId).child("Humidity").get().val()
+		temperature = db.child("Stats").child(plantId).child("Temperature").get().val()
+		light = db.child("Stats").child(plantId).child("Light").get().val()
+		
+		tweet += '\n' + plantId + "'s humidity is at " + str(humidity) + '%, its temperature is at ' + str(temperature) + 'ºC and its light is at ' + str(light) + '%.' 
+
+	print(tweet)
+	api.update_status(tweet)
 
 def stats_stream_handler(message):
-	#print(message["event"])
-	#print(message["path"])
-	#print(message["data"])
 	global firstStream
 	global api
 
@@ -48,6 +57,7 @@ def stats_stream_handler(message):
 		print(plantId + " says:")
 
 		if statId == "Temperature": # Temperature is the only stat with upper limit
+
 			thresholdMin = db.child("Thresholds").child(plantId).child("Temperature").child("min").get()
 			thresholdMax = db.child("Thresholds").child(plantId).child("Temperature").child("max").get()
 			if value < float(thresholdMin.val()):
@@ -58,13 +68,16 @@ def stats_stream_handler(message):
 				api.update_status("At " + str(value) + "ºC it's too hot for " + plantId + " to handle, we're bringing down the thermostat.")
 			else:
 				print("Just a periodic update, " + statId + " is now at " + str(value))
+
 		elif statId == "Humidity":
+
 			thresholdMin = db.child("Thresholds").child(plantId).child("Humidity").child("min").get()
 			if value < float(thresholdMin.val()):
 				print("EMERGENCY! Humidity got lower than threshold min at " + str(value))
 				api.update_status("At " + str((value)/10) + chr(37) + " humidity " + plantId + " is getting dry mouth... We're getting her a drink!")
 			else:
 				print("Just a periodic update, " + statId + " is now at " + str(value))
+
 		else: 
 			thresholdMin = db.child("Thresholds").child(plantId).child("Light").child("min").get()
 			if value < float(thresholdMin.val()):
@@ -76,10 +89,12 @@ def stats_stream_handler(message):
 
 def main():
 
-	print("Ready to stream")
-	statsStream = db.child("Stats").stream(stats_stream_handler)
-
-	#deleteLastTweets(api, 5)
+	if format(len(sys.argv)) == '2':
+		if sys.argv[1] == '1':
+			print("Ready to stream")
+			statsStream = db.child("Stats").stream(stats_stream_handler)
+		elif sys.argv[1] == '2':
+			periodic_update()
 
 if __name__ == "__main__":
 	main()
