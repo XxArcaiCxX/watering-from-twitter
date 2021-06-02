@@ -1,4 +1,3 @@
-from crontab import CronTab
 import pyrebase
 import tweepy
 
@@ -20,6 +19,10 @@ twitterConfig = {
 firebase = pyrebase.initialize_app(firebaseConfig)
 db = firebase.database()
 
+auth = tweepy.OAuthHandler(twitterConfig.get("consumer_key"), twitterConfig.get("consumer_secret"))
+auth.set_access_token(twitterConfig.get("access_token"), twitterConfig.get("access_token_secret"))
+api = tweepy.API(auth)
+
 firstStream = True
 
 def deleteLastTweets(api, number):
@@ -29,9 +32,10 @@ def deleteLastTweets(api, number):
 
 def stats_stream_handler(message):
 	#print(message["event"])
-	print(message["path"])
+	#print(message["path"])
 	#print(message["data"])
 	global firstStream
+	global api
 
 	if firstStream == True:
 		firstStream = False
@@ -43,41 +47,39 @@ def stats_stream_handler(message):
 
 		print(plantId + " says:")
 
-		if statId == "Humidity": # Humidity is the only stat with no upper limit
-			thresholdMin = db.child("Thresholds").child(plantId).child(statId).child("min").get()
-			if value < float(thresholdMin.val()):
-				print("EMERGENCY! Humidity got lower than threshold min at " + str(value))
-			else:
-				print("Just a periodic update, " + statId + " is now at " + str(value))
-		else:
-			thresholdMin = db.child("Thresholds").child(plantId).child(statId).child("min").get()
-			thresholdMax = db.child("Thresholds").child(plantId).child(statId).child("max").get()
+		if statId == "Temperature": # Temperature is the only stat with upper limit
+			thresholdMin = db.child("Thresholds").child(plantId).child("Temperature").child("min").get()
+			thresholdMax = db.child("Thresholds").child(plantId).child("Temperature").child("max").get()
 			if value < float(thresholdMin.val()):
 				print("EMERGENCY! " + statId + " got lower than threshold min at " + str(value))
-			elif value > thresholdMax.val():
+				api.update_status(plantId + " is getting the chills at " + str(value) + "ºC... We're cranking up the temp.")
+			elif value > float(thresholdMax.val()):
 				print("EMERGENCY! " + statId + " got higher than threshold max at " + str(value))
+				api.update_status("At " + str(value) + "ºC it's too hot for " + plantId + " to handle, we're bringing down the thermostat.")
 			else:
 				print("Just a periodic update, " + statId + " is now at " + str(value))
+		elif statId == "Humidity":
+			thresholdMin = db.child("Thresholds").child(plantId).child("Humidity").child("min").get()
+			if value < float(thresholdMin.val()):
+				print("EMERGENCY! Humidity got lower than threshold min at " + str(value))
+				api.update_status("At " + str((value)/10) + chr(37) + " humidity " + plantId + " is getting dry mouth... We're getting her a drink!")
+			else:
+				print("Just a periodic update, " + statId + " is now at " + str(value))
+		else: 
+			thresholdMin = db.child("Thresholds").child(plantId).child("Light").child("min").get()
+			if value < float(thresholdMin.val()):
+				print("EMERGENCY! Light got lower than threshold min at " + str(value))
+				api.update_status(plantId + " is feeling afraid of the dark at " + str(value) + chr(37) + " light strength, we're turning on a few lights.")
+			else:
+				print("Just a periodic update, " + statId + " is now at " + str((value)/10))
+		
 
 def main():
 
 	print("Ready to stream")
 	statsStream = db.child("Stats").stream(stats_stream_handler)
 
-	#plants = db.child("Plants").get()
-
-
-	#auth = tweepy.OAuthHandler(twitterConfig.get("consumer_key"), twitterConfig.get("consumer_secret"))
-	#auth.set_access_token(twitterConfig.get("access_token"), twitterConfig.get("access_token_secret"))
-
-	#api = tweepy.API(auth)
-	#deleteLastTweets(api, 1)
-
-	#tweet = ""
-	#for i in range(2):
-		#tweet += "Plant_" + str(i+1) + ": " + str(plants.val().get("Plant_" + str(i+1))) + "\n"
-
-	#api.update_status(tweet)
+	#deleteLastTweets(api, 5)
 
 if __name__ == "__main__":
 	main()
