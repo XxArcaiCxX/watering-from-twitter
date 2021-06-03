@@ -1,4 +1,5 @@
 import sys
+import time
 import pyrebase
 import tweepy
 
@@ -31,14 +32,16 @@ def periodic_update():
 	global api
 	file = open("/home/pi/Project/raspberry-pi/logs.txt", "a")
 
-	tweet = 'Hey guys, an update on the plants:'
+	t = time.localtime()
+	tweet = 'An update on the plants:'
 	for i in range(1,3):
 		plantId = "Plant_"+ str(i)
 		humidity = db.child("Stats").child(plantId).child("Humidity").get().val()
 		temperature = db.child("Stats").child(plantId).child("Temperature").get().val()
 		light = db.child("Stats").child(plantId).child("Light").get().val()
-		tweet += '\n' + plantId + "'s humidity is at " + str(humidity) + '%, its temperature is at ' + str(temperature) + 'ºC and its light is at ' + str(light) + '%.' 
+		tweet += '\n' + plantId + "'s humidity is at " + str(humidity/10) + '%, its temperature is at ' + str(temperature) + 'ºC and its light is at ' + str(light/10) + '%.' 
 
+	tweet += '\n' + str(time.strftime("%D, %H:%M:%S" ,t))
 	file.write(tweet + '\n\n')
 	file.close()
 
@@ -94,10 +97,10 @@ def main():
 
 	if format(len(sys.argv)) == '2':
 		if sys.argv[1] == '1':
-			print("Ready to stream")
-			statsStream = db.child("Stats").stream(stats_stream_handler)
-		elif sys.argv[1] == '2':
 			periodic_update()
+		elif sys.argv[1] == '2':
+			print("Ready to stream")
+			db.child("Stats").stream(stats_stream_handler)
 
 if __name__ == "__main__":
 	main()

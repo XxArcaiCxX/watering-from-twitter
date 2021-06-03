@@ -2,3 +2,47 @@ Hey guys, an update on the plants:
 Plant_1's humidity is at 567%, its temperature is at 25.18ºC and its light is at 470%.
 Plant_2's humidity is at 673%, its temperature is at 22.81ºC and its light is at 578%.
 
+Hey guys, an update on the plants:
+Plant_1's humidity is at 567%, its temperature is at 25.18ºC and its light is at 470%.
+Plant_2's humidity is at 673%, its temperature is at 22.81ºC and its light is at 578%.
+
+Hey guys, an update on the plants:
+Plant_1's humidity is at 567%, its temperature is at 25.18ºC and its light is at 470%.
+Plant_2's humidity is at 673%, its temperature is at 22.81ºC and its light is at 578%.
+
+Hey guys, an update on the plants:
+Plant_1's humidity is at 567%, its temperature is at 25.18ºC and its light is at 470%.
+Plant_2's humidity is at 673%, its temperature is at 22.81ºC and its light is at 578%.
+
+Hey guys, an update on the plants:
+Plant_1's humidity is at 567%, its temperature is at 25.18ºC and its light is at 470%.
+Plant_2's humidity is at 673%, its temperature is at 22.81ºC and its light is at 578%.
+
+Hey guys, an update on the plants:
+Plant_1's humidity is at 56.7%, its temperature is at 25.18ºC and its light is at 47.0%.
+Plant_2's humidity is at 67.3%, its temperature is at 22.81ºC and its light is at 57.8%.
+
+Hey guys, an update on the plants:
+Plant_1's humidity is at 56.7%, its temperature is at 25.18ºC and its light is at 47.0%.
+Plant_2's humidity is at 67.3%, its temperature is at 22.81ºC and its light is at 57.8%.
+
+Hey guys, an update on the plants at:
+Plant_1's humidity is at 56.7%, its temperature is at 25.18ºC and its light is at 47.0%.
+Plant_2's humidity is at 67.3%, its temperature is at 22.81ºC and its light is at 57.8%.
+time.struct_time(tm_year=2021, tm_mon=6, tm_mday=3, tm_hour=18, tm_min=38, tm_sec=44, tm_wday=3, tm_yday=154, tm_isdst=1)
+
+An update on the plants:
+Plant_1's humidity is at 56.7%, its temperature is at 25.18ºC and its light is at 47.0%.
+Plant_2's humidity is at 67.3%, its temperature is at 22.81ºC and its light is at 57.8%.
+time.struct_time(tm_year=2021, tm_mon=6, tm_mday=3, tm_hour=18, tm_min=40, tm_sec=17, tm_wday=3, tm_yday=154, tm_isdst=1)
+
+An update on the plants:
+Plant_1's humidity is at 56.7%, its temperature is at 25.18ºC and its light is at 47.0%.
+Plant_2's humidity is at 67.3%, its temperature is at 22.81ºC and its light is at 57.8%.
+06/03/21/42/2021, 18:42:31
+
+An update on the plants:
+Plant_1's humidity is at 56.7%, its temperature is at 25.18ºC and its light is at 47.0%.
+Plant_2's humidity is at 67.3%, its temperature is at 22.81ºC and its light is at 57.8%.
+06/03/21, 18:44:26
+
