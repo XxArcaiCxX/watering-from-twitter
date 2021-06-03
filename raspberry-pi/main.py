@@ -1,4 +1,5 @@
 import sys
+import time
 import pyrebase
 import tweepy
 
@@ -31,7 +32,8 @@ def periodic_update():
 	global api
 	file = open("/home/pi/Project/raspberry-pi/logs.txt", "a")
 
-	tweet = 'Hey guys, an update on the plants:'
+	t = time.localtime()
+	tweet = 'An update on the plants:'
 	for i in range(1,3):
 		plantId = "Plant_"+ str(i)
 		humidity = db.child("Stats").child(plantId).child("Humidity").get().val()
@@ -39,6 +41,7 @@ def periodic_update():
 		light = db.child("Stats").child(plantId).child("Light").get().val()
 		tweet += '\n' + plantId + "'s humidity is at " + str(humidity/10) + '%, its temperature is at ' + str(temperature) + 'ºC and its light is at ' + str(light/10) + '%.' 
 
+	tweet += '\n' + str(time.strftime("%D, %H:%M:%S" ,t))
 	file.write(tweet + '\n\n')
 	file.close()
 
