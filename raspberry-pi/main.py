@@ -94,10 +94,10 @@ def main():
 
 	if format(len(sys.argv)) == '2':
 		if sys.argv[1] == '1':
-			print("Ready to stream")
-			statsStream = db.child("Stats").stream(stats_stream_handler)
-		elif sys.argv[1] == '2':
 			periodic_update()
+		elif sys.argv[1] == '2':
+			print("Ready to stream")
+			db.child("Stats").stream(stats_stream_handler)
 
 if __name__ == "__main__":
 	main()
