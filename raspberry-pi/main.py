@@ -37,7 +37,7 @@ def periodic_update():
 		humidity = db.child("Stats").child(plantId).child("Humidity").get().val()
 		temperature = db.child("Stats").child(plantId).child("Temperature").get().val()
 		light = db.child("Stats").child(plantId).child("Light").get().val()
-		tweet += '\n' + plantId + "'s humidity is at " + str(humidity) + '%, its temperature is at ' + str(temperature) + 'ºC and its light is at ' + str(light) + '%.' 
+		tweet += '\n' + plantId + "'s humidity is at " + str(humidity/10) + '%, its temperature is at ' + str(temperature) + 'ºC and its light is at ' + str(light/10) + '%.' 
 
 	file.write(tweet + '\n\n')
 	file.close()
