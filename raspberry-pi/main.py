@@ -29,15 +29,18 @@ firstStream = True
 def periodic_update():
 	global db
 	global api
-	tweet = 'Hey guys, an update on the plants:'
+	file = open("/home/pi/Project/raspberry-pi/logs.txt", "a")
 
+	tweet = 'Hey guys, an update on the plants:'
 	for i in range(1,3):
 		plantId = "Plant_"+ str(i)
 		humidity = db.child("Stats").child(plantId).child("Humidity").get().val()
 		temperature = db.child("Stats").child(plantId).child("Temperature").get().val()
 		light = db.child("Stats").child(plantId).child("Light").get().val()
-		
 		tweet += '\n' + plantId + "'s humidity is at " + str(humidity) + '%, its temperature is at ' + str(temperature) + 'ºC and its light is at ' + str(light) + '%.' 
+
+	file.write(tweet + '\n\n')
+	file.close()
 
 	print(tweet)
 	api.update_status(tweet)
@@ -56,7 +59,7 @@ def stats_stream_handler(message):
 
 		print(plantId + " says:")
 
-		if statId == "Temperature": # Temperature is the only stat with upper limit
+		if statId == "Temperature":
 
 			thresholdMin = db.child("Thresholds").child(plantId).child("Temperature").child("min").get()
 			thresholdMax = db.child("Thresholds").child(plantId).child("Temperature").child("max").get()
@@ -78,14 +81,14 @@ def stats_stream_handler(message):
 			else:
 				print("Just a periodic update, " + statId + " is now at " + str(value))
 
-		else: 
+		else:
 			thresholdMin = db.child("Thresholds").child(plantId).child("Light").child("min").get()
 			if value < float(thresholdMin.val()):
 				print("EMERGENCY! Light got lower than threshold min at " + str(value))
 				api.update_status(plantId + " is feeling afraid of the dark at " + str(value) + chr(37) + " light strength, we're turning on a few lights.")
 			else:
 				print("Just a periodic update, " + statId + " is now at " + str((value)/10))
-		
+
 
 def main():
 

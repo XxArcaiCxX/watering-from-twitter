@@ -1,0 +1,4 @@
+Hey guys, an update on the plants:
+Plant_1's humidity is at 567%, its temperature is at 25.18ºC and its light is at 470%.
+Plant_2's humidity is at 673%, its temperature is at 22.81ºC and its light is at 578%.
+
