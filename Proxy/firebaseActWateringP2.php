@@ -1,9 +1,9 @@
 <?php
 require_once 'firebaseLib.php';
 // --- This is your Firebase URL
-$url = 'https://watering-from-twitter-default-rtdb.europe-west1.firebasedatabase.app/';
+$url = '*****';
 // --- Use your token from Firebase here
-$token = 'sTCZTZKC1fwVBAM3GQ6e4UsAwAKg4BGtUTOl4MW3';
+$token = '*****';
 // --- Here is your parameter from the http GET
 $arduino_data = $_GET['arduino_data'];
 // --- $arduino_data_post = $_POST['name'];
