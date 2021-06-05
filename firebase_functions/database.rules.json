@@ -1,0 +1,22 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": true,
+    "Stats": {
+      "$uid": {
+        ".read": true
+      }
+    },
+    "Thresholds": {
+      "$uid": {
+        ".read": true,
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "Users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid"
+      }
+    }
+  }
+}
