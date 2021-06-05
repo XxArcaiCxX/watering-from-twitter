@@ -1,16 +1,17 @@
 #include "sketchTrabalho.h"
 
 /*
- *
+
   Wireless credentials
- *
+
 */
-const char ssid[] = "FERNANDES_NET_GUEST";  // network SSID (name)
-const char pass[] = "123456789";            // network password
+const char ssid[] = "*****";                // network SSID (name)
+const char pass[] = "*****";                // network password
 int status = WL_IDLE_STATUS;                // the Wifi radio's status
 
 WiFiClient client;
-const char serverName[] = "20.90.157.153";
+const IPAddress serverIP(*****);
+const char serverIPstr[] = "*****";
 const int serverPort = 80;
 char pageAdd[64];
 char tempString[] = "00.00";
@@ -40,7 +41,6 @@ void setup() {
 
   Serial.println(F("Attempting to connect to WPA network..."));
 
-  //WiFi.config(IPAddress(192, 168, 1, 68));
   status = WiFi.begin(ssid, pass);
 
   while (status != WL_CONNECTED) {
@@ -52,25 +52,24 @@ void setup() {
 
 void loop() {
   unsigned long currentMillis = millis();
-  if(currentMillis - previousMillis >= interval) {
+  if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
     periodicUpdate();
   }
-
 
   // Check thresholds on firebase to updated with the most recent values
   update(NULL, NULL, "", R_MOIST);
   update(NULL, NULL, "", R_LIGHT);
   update(NULL, NULL, "", R_TEMP);
   update(NULL, NULL, "", R_ACT_LED);
-  if(response != lastModLed && response != "") {
-       Serial.println("LED TURNED ON!!!");
+  if (response != lastModLed && response != "") {
+    //   Serial.println("LED TURNED ON!!!");
     lastModLed = response;
     activateLED();
   }
   update(NULL, NULL, "", R_ACT_WATER);
-  if(response != lastModWater && response != "") {
-       Serial.println("\n\nWATER TURNED ON!!!");
+  if (response != lastModWater && response != "") {
+    //   Serial.println("\n\nWATER TURNED ON!!!");
     lastModWater = response;
     activateWater();
   }
@@ -78,44 +77,40 @@ void loop() {
   // Emergency updates
   sensorValue = 1000 - analogRead(sensorPin);
   sensorValue < 0 ? sensorValue = 0 : sensorValue = sensorValue;
-  if(sensorValue < limitMoist) {   // plant is thirsty
+  if (sensorValue < limitMoist) {  // plant is thirsty
     digitalWrite(LED, HIGH);
     update(sensorValue, NULL, "", MOIST);
     Serial.println(F("**PLANT 2** is thirsty\nTurning on actuator..."));
     activateWater();
   }
   else digitalWrite(LED, LOW);
-  //delay(1000);
 
   int value = analogRead(A0);
-  if(value < limitLight) {
+  if (value < limitLight) {
     update(value, NULL, "", LIGHT);
     Serial.println(F("**PLANT 2** has little light\nTurning on actuator..."));
     activateLED();
   }
-  //delay(1000);
 
   sensors.requestTemperatures();
   double temp = sensors.getTempCByIndex(0);
-  Serial.print(F("Temperature is: "));
-  Serial.println(temp);
-  if(temp < limitTemp[0]) {
+  if (temp < limitTemp[0]) {
     update(NULL, temp, "", TEMP);
-    Serial.println(F("**PLANT 1** is cold\nTurning on actuator..."));
+    Serial.println(F("**PLANT 2** is cold\nTurning on actuator..."));
     activateLED();
   }
-  else if(temp > limitTemp[1]) {
+  else if (temp > limitTemp[1]) {
     update(NULL, temp, "", TEMP);
-    Serial.println(F("**PLANT 1** is hot\nTurning on actuator..."));
+    Serial.println(F("**PLANT 2** is hot\nTurning on actuator..."));
     activateLED();
   }
 }
 
 void periodicUpdate() {
   /**
-    *
+
     Humidity sensor
-    *
+
   **/
   Serial.println("\n\n******PERIODIC UPDATE******");
   sensorValue = 1000 - analogRead(sensorPin);
@@ -130,21 +125,19 @@ void periodicUpdate() {
     digitalWrite(LED, LOW);
   }
 
-  //delay(1000);
   /**
-    *
+
     Light sensor
-    *
+
   **/
   int value = analogRead(A0);
   //  Serial.print(F("Light sensor: "));
   //  Serial.println(value);
 
-  //delay(1000);
   /**
-    *
+
     Temperature sensor
-    *
+
   **/
   // Requesting temperatures...
   sensors.requestTemperatures();
@@ -168,36 +161,37 @@ char *ftoa(char *a, double f, int precision) {
   return ret;
 }
 
-byte getPage(char *ipBuf, int thisPort, char *page) {
+byte getPage(IPAddress ipBuf, int thisPort, char *page) {
   char inChar;
   char outBuf[128];
+  response = "";
 
+  delay(200);
   Serial.print("connecting...");
-  if(client.connect(ipBuf, thisPort)) {
+  if (client.connect(ipBuf, thisPort)) {
     Serial.println("connected");
 
     sprintf(outBuf, "GET %s HTTP/1.1", page);
     client.println(outBuf);
-    sprintf(outBuf, "Host: %s", serverName);
+    sprintf(outBuf, "Host: %s", serverIPstr);
     client.println(outBuf);
-    client.println("Connection: close\r\n");
+    client.println("Connection: close");
+    client.println();
   }
   else {
     Serial.println("failed");
     client.stop();
-    response = "";
     return 0;
   }
 
   // connectLoop controls the hardware fail timeout
   int connectLoop = 0;
 
-  while(client.connected()) {
-    response = "";
+  while (client.connected()) {
     while (client.available()) {
       inChar = client.read();
       Serial.write(inChar);
-      if(inChar == '\n') response = "";
+      if (inChar == '\n') response = "";
       else response += inChar;
       // set connectLoop to zero if a packet arrives
       connectLoop = 0;
@@ -211,7 +205,6 @@ byte getPage(char *ipBuf, int thisPort, char *page) {
       Serial.println();
       Serial.println("Timeout");
       client.stop();
-      response = "";
     }
     // this is a delay for the connectLoop timing
     delay(1);
@@ -226,69 +219,69 @@ byte getPage(char *ipBuf, int thisPort, char *page) {
 }
 
 void update(int v1, double v2, char* v3, TYPE t) {
-  switch(t) {
+  switch (t) {
     case LIGHT: {
-      sprintf(pageAdd, "/firebaseLightP2.php?arduino_data=%d", v1);
-      sendItToServer();
-      break;
-    }case TEMP: {
-      sprintf(pageAdd, "/firebaseTempP2.php?arduino_data=%s", ftoa(tempString, v2, 2));
-      sendItToServer();
-      break;
-    }case MOIST: {
-      sprintf(pageAdd, "/firebaseMoistP2.php?arduino_data=%d", v1);
-      sendItToServer();
-      break;
-    }case R_LIGHT: {
-      sprintf(pageAdd, "/thresholdsLightP2.txt");
-      sendItToServer();
-      DeserializationError error = deserializeJson(doc, response);
-      if(error) {
-        Serial.print("deserializeJson() failed: ");
-        Serial.println(error.c_str());
+        sprintf(pageAdd, "/firebaseLightP2.php?arduino_data=%d", v1);
+        sendItToServer();
+        break;
+    } case TEMP: {
+        sprintf(pageAdd, "/firebaseTempP2.php?arduino_data=%s", ftoa(tempString, v2, 2));
+        sendItToServer();
+        break;
+    } case MOIST: {
+        sprintf(pageAdd, "/firebaseMoistP2.php?arduino_data=%d", v1);
+        sendItToServer();
+        break;
+    } case R_LIGHT: {
+        sprintf(pageAdd, "/thresholdsLightP2.txt");
+        sendItToServer();
+        DeserializationError error = deserializeJson(doc, response);
+        if (error) {
+          Serial.print("deserializeJson() failed: ");
+          Serial.println(error.c_str());
+        }
+        else limitLight = doc["minValue"];
+        break;
+    } case R_TEMP: {
+        sprintf(pageAdd, "/thresholdsTempP2.txt");
+        sendItToServer();
+        DeserializationError error = deserializeJson(doc, response);
+        if (error) {
+          Serial.print("deserializeJson() failed: ");
+          Serial.println(error.c_str());
+        }
+        else {
+          limitTemp[0] = doc["minValue"];
+          limitTemp[1] = doc["maxValue"];
+        }
+        break;
+    } case R_MOIST: {
+        sprintf(pageAdd, "/thresholdsMoistP2.txt");
+        sendItToServer();
+        DeserializationError error = deserializeJson(doc, response);
+        if (error) {
+          Serial.print("deserializeJson() failed: ");
+          Serial.println(error.c_str());
+        }
+        else limitMoist = doc["minValue"];
+        break;
+    } case ACT_LED: {
+        sprintf(pageAdd, "/firebaseActLedP2.php?arduino_data=%s", v3);
+        sendItToServer();
+        break;
+    } case ACT_WATER: {
+        sprintf(pageAdd, "/firebaseActWateringP2.php?arduino_data=%s", v3);
+        sendItToServer();
+        break;
+    } case R_ACT_LED: {
+        sprintf(pageAdd, "/actuatorLedP2.txt");
+        sendItToServer();
+        break;
+    } case R_ACT_WATER: {
+        sprintf(pageAdd, "/actuatorWaterP2.txt");
+        sendItToServer();
+        break;
       }
-      else limitLight = doc["minValue"];
-      break;
-    }case R_TEMP: {
-      sprintf(pageAdd, "/thresholdsTempP2.txt");
-      sendItToServer();
-      DeserializationError error = deserializeJson(doc, response);
-      if(error) {
-        Serial.print("deserializeJson() failed: ");
-        Serial.println(error.c_str());
-      }
-      else {
-        limitTemp[0] = doc["minValue"];
-        limitTemp[1] = doc["maxValue"];
-      }
-      break;
-    }case R_MOIST: {
-      sprintf(pageAdd, "/thresholdsMoistP2.txt");
-      sendItToServer();
-      DeserializationError error = deserializeJson(doc, response);
-      if(error) { 
-        Serial.print("deserializeJson() failed: ");
-        Serial.println(error.c_str());
-      }
-      else limitMoist = doc["minValue"];   
-      break;
-    }case ACT_LED: {
-      sprintf(pageAdd, "/firebaseActLedP2.php?arduino_data=%s", v3);
-      sendItToServer();
-      break;
-    }case ACT_WATER: {
-      sprintf(pageAdd, "/firebaseActWateringP2.php?arduino_data=%s", v3);
-      sendItToServer();
-      break;
-    }case R_ACT_LED: {
-      sprintf(pageAdd, "/actuatorLedP2.txt");
-      sendItToServer();
-      break;
-    }case R_ACT_WATER: {
-      sprintf(pageAdd, "/actuatorWaterP2.txt");
-      sendItToServer();
-      break;
-    }
   }
 }
 
@@ -298,7 +291,7 @@ void updateAll(int v1, int v2, double v3) {
 }
 
 void sendItToServer() {
-  if(!getPage(serverName, serverPort, pageAdd)) Serial.print(F("Fail "));
+  if (!getPage(serverIP, serverPort, pageAdd)) Serial.print(F("Fail "));
   else Serial.print("Pass ");
   totalCount++;
   Serial.println(totalCount, DEC);
