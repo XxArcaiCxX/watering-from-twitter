@@ -1,6 +1,6 @@
 # Watering from twitter
 
-Project Realized by:
+Project realized by:
 * Augusto Henriques, up201605486
 * David Fernandes, up201605791
 * João Silva, up201606816
