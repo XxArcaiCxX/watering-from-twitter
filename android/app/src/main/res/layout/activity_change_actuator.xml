@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/orange"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="175dp"
+        android:layout_alignParentTop="true"
+
+        android:layout_marginTop="84dp"
+        android:src="@drawable/planta" />
+
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="95dp"
+        android:src="@drawable/texto" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="319dp"
+        android:text="ON/OFF Watering"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="22dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="444dp"
+        android:text="ON/OFF LED"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+
+        android:textStyle="bold|italic" />
+
+
+    <Switch
+        android:id="@+id/switch_Temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="52dp"
+        android:layout_marginRight="52dp"
+        android:layout_marginBottom="254dp"
+        android:text="OFF "
+        android:textStyle="bold|italic" />
+
+    <Switch
+        android:id="@+id/switch_Li"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="52dp"
+        android:layout_marginRight="52dp"
+        android:layout_marginBottom="134dp"
+        android:text="OFF "
+        android:textStyle="bold|italic" />
+
+</RelativeLayout>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "250650841747",
+    "firebase_url": "https://watering-from-twitter-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "watering-from-twitter",
+    "storage_bucket": "watering-from-twitter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:250650841747:android:13a2a4064879351d99f366",
+        "android_client_info": {
+          "package_name": "com.group5.waterfromtwitter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "250650841747-6qt3juidusailedhc5qjhnumh79pj9j7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf6N9ZOD5bkIVwrnyplSUTqbwO-OGcrrw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "250650841747-6qt3juidusailedhc5qjhnumh79pj9j7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
